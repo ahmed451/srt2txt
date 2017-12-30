@@ -26,6 +26,10 @@ NTSC: Frame # = (milliseconds * 29.97) / 1000
 
 PAL: Frame # = (milliseconds * 25) / 1000
 
+Update: Wed Dec 27 20:01:20 2017 
+Make code compatible with python 3
+Fix residual entry
+
 """
 
 __author__ = 'Stephane Peter'
@@ -75,11 +79,13 @@ def convert(srtfile, txtfile, format, gap):
                     start = convert_timecode(times[0], gap - diff)
                 else:
                     start = convert_timecode(times[0])
-                print >> txtfile, "{0:d} {1:s} {2:s} {3:s}".format(subnum, start, convert_timecode(times[1]), txt)
+                txtfile.write("{0:d} {1:s} {2:s} {3:s}".format(subnum, start, convert_timecode(times[1]), txt))
                 last_end = to_frames(times[1])
                 state = SUB_NUMBER
             else:
                 txt += line
+    # Print residual entries in the srt
+    txtfile.write("{0:d} {1:s} {2:s} {3:s}".format(subnum, start, convert_timecode(times[1]), txt))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Convert subtitles to Adobe text format.')
