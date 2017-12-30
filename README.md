@@ -14,7 +14,7 @@ in Encore for Blu-ray discs. Frames are padded at the beginning of clips when ne
 
 ## Requirements
 
-Python 2.7, developed and tested on MacOS X 10.9.
+Python 2.7/3.6, developed and tested on MacOS X 10.9.
 
 ## Author
 
