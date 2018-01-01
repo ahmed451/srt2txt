@@ -1,12 +1,13 @@
-# srt2txt - Subtitle converter
-## Convert subtitles from SRT to the Adobe Encore script format (.txt)
+# srt/vtt2txt - Subtitle converter
+## Convert subtitles from SRT/VTT to the Adobe Encore script format (.txt)
 
-This Python script translates subtitle files in the SRT format (as exported by YouTube) to a text
+This Python script translates subtitle files in the SRT/VTT formats (as exported by YouTube) to a text
 format suitable to be used with the Adobe Encore suite for the purposes of making DVD subtitle tracks.
 
 ## Usage
 
 `srt2txt [--format {ntsc,pal}] [--gap N] [input file] [output file]`
+`vtt2txt [--format {ntsc,pal}] [--gap N] [input file] [output file]`
 
 - `--gap` is used to specify the minimum number of frames between text clips, default is 5. This is a requirement
 in Encore for Blu-ray discs. Frames are padded at the beginning of clips when needed.
@@ -18,4 +19,6 @@ Python 2.7/3.6, developed and tested on MacOS X 10.9.
 
 ## Author
 
+Updated by Ahmed Abdelali (aabdelali@hbku.edu.qa) Dec 2017.
 Written by Stéphane Peter (megastep@megastep.org)
+
