@@ -86,7 +86,7 @@ def convert(vttfile, txtfile, format, gap):
                 last_end = to_frames(times[1])
                 state = SUB_TIMES
             else:
-                txt += line
+                txt += line + ' ' # Connecting lines
         elif state == VTT_HEADER:
             if len(line.strip()) == 0:
                 state = SUB_TIMES
