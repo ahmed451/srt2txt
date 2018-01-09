@@ -71,18 +71,20 @@ def convert(vttfile, txtfile, format, gap):
     subnum = 0
     for line in vttfile.readlines():
         line = line.strip()
-        if state == SUB_TIMES:
+        if state == SUB_TIMES and " --> " in line:
             times = line.strip().split(" --> ")
             txt = ""
             state = SUB_STRINGS
         elif state == SUB_STRINGS:
             if len(line.strip()) == 0:  # Just \n, end of entry
+                #print("Time:",times," last:",last_end)
                 diff = to_frames(times[0]) - last_end
                 if diff < gap:
                     start = convert_timecode(times[0], gap - diff)
                 else:
                     start = convert_timecode(times[0])
-                txtfile.write("{0:d}\t{1:s}\t{2:s}\t{3:s}\n".format(subnum, start, convert_timecode(times[1]), txt))
+                if len(txt) != 0:
+                    txtfile.write("{0:d}\t{1:s}\t{2:s}\t{3:s}\n".format(subnum, start, convert_timecode(times[1]), txt))
                 last_end = to_frames(times[1])
                 state = SUB_TIMES
             else:
@@ -91,7 +93,7 @@ def convert(vttfile, txtfile, format, gap):
             if len(line.strip()) == 0:
                 state = SUB_TIMES
     if len(line.strip()) != 0:
-        txtfile.write("{0:d}\t{1:s}\t{2:s}\t{3:s}\n".format(subnum, start, convert_timecode(times[1]), txt))
+        txtfile.write("{0:d}\t{1:s}\t{2:s}\t{3:s}\n".format(subnum, start, convert_timecode(times[1]), txt,len()))
         
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Convert subtitles to Adobe text format.')
