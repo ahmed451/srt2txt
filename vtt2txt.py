@@ -40,6 +40,7 @@ __email__ = 'megastep@megastep.org'
 
 import sys
 import argparse
+import re
 
 # Input states
 #SUB_NUMBER = 1
@@ -70,25 +71,26 @@ def convert(vttfile, txtfile, format, gap):
     state = VTT_HEADER
     subnum = 0
     for line in vttfile.readlines():
-        line = line.strip()
+        line = line.strip().replace(' align:start position:19%','')
         if state == SUB_TIMES and " --> " in line:
             times = line.strip().split(" --> ")
             txt = ""
             state = SUB_STRINGS
         elif state == SUB_STRINGS:
             if len(line.strip()) == 0:  # Just \n, end of entry
-                #print("Time:",times," last:",last_end)
+                
                 diff = to_frames(times[0]) - last_end
                 if diff < gap:
                     start = convert_timecode(times[0], gap - diff)
                 else:
                     start = convert_timecode(times[0])
                 if len(txt) != 0:
+                    #print("Time:",times," last:",txt)
                     txtfile.write("{0:d}\t{1:s}\t{2:s}\t{3:s}\n".format(subnum, start, convert_timecode(times[1]), txt))
                 last_end = to_frames(times[1])
                 state = SUB_TIMES
             else:
-                txt += line + ' ' # Connecting lines
+                txt += re.sub('<[^>]+>','',line) + ' ' # Connecting lines
         elif state == VTT_HEADER:
             if len(line.strip()) == 0:
                 state = SUB_TIMES
