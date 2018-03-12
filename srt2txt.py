@@ -63,11 +63,22 @@ def convert(srtfile, txtfile, format, gap):
         return "%s%s%d" % (sep.join(elts), sep, (int(ms) * fps / 1000)+inc)
 
     last_end = 0
+    start = ''
+    l = 0
+    lline = 0
     state = SUB_NUMBER
     for line in srtfile.readlines():
+        if(' --&gt; ' in line and ':' in line): # A time-line fix
+            line = line.replace(' --&gt; ',' --> ')
+        #print("L:'"+line.strip()+"' S:",state," Len:",len(line.strip()),l)
+
         if state == SUB_NUMBER:
-            subnum = int(line)
-            state = SUB_TIMES
+            if(len(line.strip()) == 0):
+                state = SUB_NUMBER
+                continue
+            else:
+                subnum = int(line)
+                state = SUB_TIMES
         elif state == SUB_TIMES:
             times = line.strip().split(" --> ")
             txt = ""
@@ -75,17 +86,18 @@ def convert(srtfile, txtfile, format, gap):
         elif state == SUB_STRINGS:
             if len(line.strip()) == 0:  # Just \n, end of entry
                 diff = to_frames(times[0]) - last_end
+                start = convert_timecode(times[0])
                 if diff < gap:
                     start = convert_timecode(times[0], gap - diff)
-                else:
-                    start = convert_timecode(times[0])
-                txtfile.write("{0:d} {1:s} {2:s} {3:s}".format(subnum, start, convert_timecode(times[1]), txt))
+                txtfile.write("{0:d} {1:s} {2:s} {3:s}\n".format(subnum, start, convert_timecode(times[1]), txt.strip()))
                 last_end = to_frames(times[1])
                 state = SUB_NUMBER
             else:
-                txt += line
+                txt += ' '+line.strip()
+
     # Print residual entries in the srt
-    txtfile.write("{0:d} {1:s} {2:s} {3:s}".format(subnum, start, convert_timecode(times[1]), txt))
+    #txtfile.write("{0:d} {1:s} {2:s} {3:s}".format(subnum, start, convert_timecode(times[1]), txt))
+    txtfile.close()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Convert subtitles to Adobe text format.')
